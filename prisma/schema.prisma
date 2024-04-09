@@ -33,6 +33,8 @@ model Role {
   deletedAt   DateTime? @db.Timestamp(6)
   name        String    @unique
   luckyNumber Int
+  type        RoleTypeEnum
+  priority    Int
 
   users       User[]
   groups      Group[]
@@ -46,8 +48,8 @@ model Group {
   updatedAt     DateTime       @updatedAt @db.Timestamp(6)
   deletedAt     DateTime?      @db.Timestamp(6)
   name          String         @unique
+  scopes        AppModulesEnum[]
   permissions   PermissionEnum[]
-  scope         AppModulesEnum
 
   roleId        String    @unique @db.Uuid
   role          Role      @relation(fields: [roleId], references: [id])
@@ -68,14 +70,26 @@ model UserGroup {
 
 
 enum PermissionEnum {
-  CREATE
-  READ
-  UPDATE
-  DELETE
+  All
+  Create
+  Read
+  Update
+  Delete
 }
 
 enum AppModulesEnum {
- USER
- ROLE
- PERMISSION
+  All
+  User
+  Role
+  Permission
+  Groups
+  Auth
+}
+
+enum RoleTypeEnum {
+  Administrator
+  Manager
+  TeamLeader
+  Employee
+  Supervisor
 }

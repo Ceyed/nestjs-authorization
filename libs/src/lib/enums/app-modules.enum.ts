@@ -1,5 +1,8 @@
 export enum AppModulesEnum {
-  USE = 'user',
-  ROLE = 'role',
-  PERMISSION = 'permission',
+  All = 'All',
+  User = 'User',
+  Role = 'Role',
+  Permission = 'Permission',
+  Groups = 'Groups',
+  Auth = 'Auth',
 }

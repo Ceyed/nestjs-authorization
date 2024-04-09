@@ -13,12 +13,12 @@ export class BaseEntity {
   @ApiProperty()
   @IsDate()
   @Type(() => Date)
-  created_at: Date;
+  createdAt: Date;
 
   @ApiProperty()
   @IsDate()
   @Type(() => Date)
-  updated_at: Date;
+  updatedAt: Date;
 
   @IsOptional()
   @IsDate()

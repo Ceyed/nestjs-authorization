@@ -18,10 +18,15 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@libs/utils/*": ["libs/src/lib/utils/*"],
       "@libs/constants/*": ["libs/src/lib/constants/*"],
+      "@libs/decorators/*": ["libs/src/lib/decorators/*"],
+      "@libs/dtos/*": ["libs/src/lib/dtos/*"],
       "@libs/entities/*": ["libs/src/lib/entities/*"],
-      "@libs/enums/*": ["libs/src/lib/enums/*"]
+      "@libs/enums/*": ["libs/src/lib/enums/*"],
+      "@libs/utils/*": ["libs/src/lib/utils/*"],
+      "@libs/guards/*": ["libs/src/lib/guards/*"],
+      "@libs/models/*": ["libs/src/lib/models/*"],
+      "@libs/modules/*": ["libs/src/lib/modules/*"]
     }
   }
 }
