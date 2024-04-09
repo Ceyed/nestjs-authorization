@@ -6,3 +6,76 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model User {
+  @@map("users")
+  
+  id          String    @id @default(uuid()) @db.Uuid
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamp(6)
+  deletedAt   DateTime? @db.Timestamp(6)
+  name        String
+  username    String    @unique
+  password    String
+
+  roleId      String    @unique @db.Uuid
+  role        Role      @relation(fields: [roleId], references: [id])
+
+  userGroups  UserGroup[]
+}
+
+model Role {
+  @@map("roles")
+  
+  id          String    @id @default(uuid()) @db.Uuid
+  createdAt   DateTime  @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime  @updatedAt @db.Timestamp(6)
+  deletedAt   DateTime? @db.Timestamp(6)
+  name        String    @unique
+  luckyNumber Int
+
+  users       User[]
+  groups      Group[]
+}
+
+model Group {
+  @@map("groups")
+  
+  id            String         @id @default(uuid()) @db.Uuid
+  createdAt     DateTime       @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime       @updatedAt @db.Timestamp(6)
+  deletedAt     DateTime?      @db.Timestamp(6)
+  name          String         @unique
+  permissions   PermissionEnum[]
+  scope         AppModulesEnum
+
+  roleId        String    @unique @db.Uuid
+  role          Role      @relation(fields: [roleId], references: [id])
+
+  userGroups    UserGroup[]
+}
+
+model UserGroup {
+  @@map("users_groups")
+  @@id([userId, groupId])
+
+  userId        String @db.Uuid
+  user          User @relation(fields: [userId], references: [id])
+
+  groupId       String @db.Uuid
+  group         Group @relation(fields: [groupId], references: [id])
+}
+
+
+enum PermissionEnum {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+}
+
+enum AppModulesEnum {
+ USER
+ ROLE
+ PERMISSION
+}
