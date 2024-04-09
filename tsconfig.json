@@ -18,7 +18,7 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@lib/utils": ["libs/src/lib/utils/index.ts"]
+      "@libs/utils/*": ["libs/src/lib/utils/*"]
     }
   }
 }
