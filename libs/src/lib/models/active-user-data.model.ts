@@ -1,9 +1,8 @@
-import { RoleTypeEnum } from '@libs/enums/user-type.enum';
-import { uuid } from '../constants';
+import { RoleTypeEnum } from '@prisma/client';
 
 export interface UserAuthModel {
   sub: string;
   username: string;
-  role: RoleTypeEnum;
-  userGroupIds: uuid[];
+  roleType: RoleTypeEnum;
+  groups: string;
 }

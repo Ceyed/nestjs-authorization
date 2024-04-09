@@ -1,3 +1,4 @@
+import { EMPLOYEE_ROLE_ID } from '@libs/constants/roles-ids.constant';
 import { uuid } from '@libs/constants/uuid.constant';
 import { RefreshTokenDto, SignInDto, SignUpDto } from '@libs/dtos/auth';
 import { AccessTokenAndRefreshTokenDto } from '@libs/dtos/common';
@@ -5,13 +6,7 @@ import { UserEntity } from '@libs/entities/user/user.entity';
 import { UserAuthModel } from '@libs/models/active-user-data.model';
 import { UpdateResultModel } from '@libs/models/update-result.model';
 import { PrismaService } from '@libs/modules/prisma';
-import {
-  BadRequestException,
-  ConflictException,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { randomUUID } from 'crypto';
@@ -33,33 +28,51 @@ export class AuthenticationService {
 
   async signUp(signUpDto: SignUpDto): Promise<UpdateResultModel> {
     try {
-      let user: UserEntity = new UserEntity();
-      user.password = await this._hashingService.hash(signUpDto.password + this._jwtConfig.pepper);
-      user.username = signUpDto.username;
-      // user = await this._prisma.user.create({ data: signUpDto as Prisma.UserCreateInput });
+      const { id: groupId } = await this._prisma.group.findFirstOrThrow({
+        where: { roleId: EMPLOYEE_ROLE_ID },
+      });
+
+      const hashedPassword: string = await this._hashingService.hash(
+        signUpDto.password + this._jwtConfig.pepper,
+      );
+      const user: UserEntity = await this._prisma.user.create({
+        data: {
+          name: signUpDto.name,
+          username: signUpDto.username,
+          password: hashedPassword,
+          roleId: EMPLOYEE_ROLE_ID,
+        },
+      });
+      await this._prisma.userGroup.create({
+        data: {
+          userId: user.id,
+          groupId,
+        },
+      });
       return { status: !!user };
     } catch (err) {
-      if (err instanceof BadRequestException) throw err;
+      if (err instanceof ConflictException) throw err;
       else throw new ConflictException('User with this credentials already exists');
     }
   }
 
   async signIn(signInDto: SignInDto): Promise<AccessTokenAndRefreshTokenDto> {
-    // const user = await this._userRepository.findOneBy({
-    //   username: signInDto.username,
-    // });
-    // if (!user) {
-    //   throw new UnauthorizedException('User does not exists');
-    // }
-    // const isEqual = await this._hashingService.compare(
-    //   signInDto.password + this._jwtConfig.pepper,
-    //   user.password,
-    // );
-    // if (!isEqual) {
-    //   throw new UnauthorizedException('Password does not match');
-    // }
-    // return this.generateTokens(user);
-    return;
+    const user: UserEntity = await this._prisma.user.findFirst({
+      where: { username: signInDto.username },
+      include: { userGroups: { include: { group: true } }, role: true },
+    });
+    if (!user) {
+      throw new UnauthorizedException('User does not exists');
+    }
+
+    const isEqual = await this._hashingService.compare(
+      signInDto.password + this._jwtConfig.pepper,
+      user.password,
+    );
+    if (!isEqual) {
+      throw new UnauthorizedException('Password does not match');
+    }
+    return this.generateTokens(user);
   }
 
   async refreshTokens(refreshTokenDto: RefreshTokenDto): Promise<AccessTokenAndRefreshTokenDto> {
@@ -71,17 +84,22 @@ export class AuthenticationService {
         audience: this._jwtConfig.audience,
         issuer: this._jwtConfig.issuer,
       });
-      // const user: UserEntity = await this._userRepository.findOneByOrFail({
-      //   id: sub,
-      // });
-      // const isValid: boolean = await this._refreshTokenIdsStorage.validate(user.id, refreshTokenId);
-      // if (isValid) {
-      //   await this._refreshTokenIdsStorage.invalidate(user.id);
-      // } else {
-      //   throw new Error('Invalid refresh token');
-      // }
-      // return this.generateTokens(user);
-      return;
+
+      const user: UserEntity = await this._prisma.user.findFirst({
+        where: { id: sub },
+        include: { userGroups: { include: { group: true } }, role: true },
+      });
+      if (!user) {
+        throw new UnauthorizedException('User does not exists');
+      }
+
+      const isValid: boolean = await this._refreshTokenIdsStorage.validate(user.id, refreshTokenId);
+      if (isValid) {
+        await this._refreshTokenIdsStorage.invalidate(user.id);
+      } else {
+        throw new Error('Invalid refresh token');
+      }
+      return this.generateTokens(user);
     } catch (error) {
       if (error instanceof InvalidatedRefreshTokenError) {
         throw new UnauthorizedException('Access denied (Token compromised?)');
@@ -94,9 +112,17 @@ export class AuthenticationService {
     const refreshTokenId = randomUUID();
     const [accessToken, refreshToken] = await Promise.all([
       this._signToken<Partial<UserAuthModel>>(user.id, this._jwtConfig.accessTokenTtl, {
-        // todo HERE
-        // role: user.role.,
+        sub: user.id,
         username: user.username,
+        roleType: user.role.type,
+        groups: user.userGroups
+          .map((userGroup) =>
+            JSON.stringify({
+              scopes: userGroup.group.scopes.join('-').toString(),
+              permissions: userGroup.group.permissions.join('-').toString(),
+            }),
+          )
+          .join('|'),
       }),
       this._signToken(user.id, this._jwtConfig.refreshTokenTtl, {
         refreshTokenId,

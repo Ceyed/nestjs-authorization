@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
+import { RoleTypeEnum } from '@prisma/client';
+import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 import { BaseEntity } from '../base.entity';
 import { GroupEntity } from '../group/group.entity';
 import { UserEntity } from '../user/user.entity';
@@ -16,8 +17,19 @@ export class RoleEntity extends BaseEntity {
   luckyNumber: number;
 
   @ApiProperty()
-  users: UserEntity[];
+  @IsNumber()
+  @Min(0)
+  priority: number;
+
+  @ApiProperty({ type: 'enum', enum: RoleTypeEnum })
+  @IsEnum(RoleTypeEnum)
+  type: RoleTypeEnum;
+
+  @ApiPropertyOptional()
+  @IsArray()
+  users?: UserEntity[];
 
   @ApiProperty()
-  groups: GroupEntity[];
+  @IsArray()
+  groups?: GroupEntity[];
 }

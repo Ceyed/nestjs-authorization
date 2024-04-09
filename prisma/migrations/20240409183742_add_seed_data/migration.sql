@@ -20,7 +20,7 @@ INSERT INTO groups ("id", name, "roleId", scopes, permissions, "updatedAt")
 VALUES (gen_random_uuid(), 'Default Administrator Group', '13d4e13a-1d90-4d5f-bf02-2e87647dc0a1', '{"All"}', '{"All"}', CURRENT_TIMESTAMP);
 
 INSERT INTO groups ("id", name, "roleId", scopes, permissions, "updatedAt") 
-VALUES ( gen_random_uuid(), 'Default Manager Group', '46a34a17-2758-49d2-96cd-3f8d02804e54', '{"User","Role","Permission"}', '{"All"}', CURRENT_TIMESTAMP);
+VALUES (gen_random_uuid(), 'Default Manager Group', '46a34a17-2758-49d2-96cd-3f8d02804e54', '{"User","Role","Permission"}', '{"All"}', CURRENT_TIMESTAMP);
 
 INSERT INTO groups ("id", name, "roleId", scopes, permissions, "updatedAt") 
 VALUES (gen_random_uuid(), 'Default TeamLeader Group', '8100ec7f-1f7c-4788-aef1-05454b595d84', '{"Role","User"}', '{"Create","Read","Update"}', CURRENT_TIMESTAMP);
