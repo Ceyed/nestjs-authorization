@@ -1,5 +1,6 @@
 import { Logger, ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app/app.module';
 import { AppConfig, appConfig } from './app/config/app.config';
 
@@ -15,6 +16,17 @@ async function bootstrap() {
 
   // * Introduce appConfig
   const appConfigInstance: AppConfig = app.get(appConfig.KEY);
+
+  // * Setup Swagger
+  const config = new DocumentBuilder()
+    .setTitle('Authorization')
+    .setDescription('The NestJS-Authorization API description')
+    .addBearerAuth()
+    .addServer(`http://${appConfigInstance.host}:${appConfigInstance.port}`)
+    .addServer(`http://localhost:${appConfigInstance.port}`)
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup(`${globalPrefix}/docs`, app, document);
 
   // * Start server
   await app.listen(appConfigInstance.port);
