@@ -14,11 +14,12 @@ import { jwtConfig } from 'src/app/config/jwt.config';
 import { HashingService } from './hashing/hashing.service';
 import { InvalidatedRefreshTokenError } from './refresh-token-ids-storage/invalidated-refresh-token-error.storage';
 import { RefreshTokenIdsStorage } from './refresh-token-ids-storage/refresh-token-ids.storage';
+import { UserGroupsToBase64 } from '@libs/utils/user-groups-to-base64.util';
 
 @Injectable()
 export class AuthenticationService {
   constructor(
-    private readonly _prisma: PrismaService,
+    private readonly _prismaService: PrismaService,
     private readonly _hashingService: HashingService,
     private readonly _jwtService: JwtService,
     @Inject(jwtConfig.KEY)
@@ -28,14 +29,14 @@ export class AuthenticationService {
 
   async signUp(signUpDto: SignUpDto): Promise<UpdateResultModel> {
     try {
-      const { id: groupId } = await this._prisma.group.findFirstOrThrow({
+      const { id: groupId } = await this._prismaService.group.findFirstOrThrow({
         where: { roleId: EMPLOYEE_ROLE_ID },
       });
 
       const hashedPassword: string = await this._hashingService.hash(
         signUpDto.password + this._jwtConfig.pepper,
       );
-      const user: UserEntity = await this._prisma.user.create({
+      const user: UserEntity = await this._prismaService.user.create({
         data: {
           name: signUpDto.name,
           username: signUpDto.username,
@@ -43,7 +44,7 @@ export class AuthenticationService {
           roleId: EMPLOYEE_ROLE_ID,
         },
       });
-      await this._prisma.userGroup.create({
+      await this._prismaService.userGroup.create({
         data: {
           userId: user.id,
           groupId,
@@ -57,7 +58,7 @@ export class AuthenticationService {
   }
 
   async signIn(signInDto: SignInDto): Promise<AccessTokenAndRefreshTokenDto> {
-    const user: UserEntity = await this._prisma.user.findFirst({
+    const user: UserEntity = await this._prismaService.user.findFirst({
       where: { username: signInDto.username },
       include: { userGroups: { include: { group: true } }, role: true },
     });
@@ -85,7 +86,7 @@ export class AuthenticationService {
         issuer: this._jwtConfig.issuer,
       });
 
-      const user: UserEntity = await this._prisma.user.findFirst({
+      const user: UserEntity = await this._prismaService.user.findFirst({
         where: { id: sub },
         include: { userGroups: { include: { group: true } }, role: true },
       });
@@ -115,14 +116,7 @@ export class AuthenticationService {
         sub: user.id,
         username: user.username,
         roleType: user.role.type,
-        groups: user.userGroups
-          .map((userGroup) =>
-            JSON.stringify({
-              scopes: userGroup.group.scopes.join('-').toString(),
-              permissions: userGroup.group.permissions.join('-').toString(),
-            }),
-          )
-          .join('|'),
+        groups: UserGroupsToBase64(user.userGroups),
       }),
       this._signToken(user.id, this._jwtConfig.refreshTokenTtl, {
         refreshTokenId,

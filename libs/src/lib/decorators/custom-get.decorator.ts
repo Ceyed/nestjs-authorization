@@ -1,8 +1,10 @@
 import { applyDecorators, Get, SetMetadata, Type } from '@nestjs/common';
 import { SwaggerEnumType } from '@nestjs/swagger/dist/types/swagger-enum.type';
+import { ROUTE_ACTION_METADATA } from '../constants/role-metadata.constant';
 import { SharedCustomRouteInfoDto } from '../dtos';
-import { getSharedDecorators } from './get-shared-decorators';
+import { PermissionEnum } from '../enums';
 import { ApiFilterQuery } from './api-filter-query';
+import { getSharedDecorators } from './get-shared-decorators';
 
 export type ApiCustomParamOption = { enum: SwaggerEnumType };
 
@@ -13,7 +15,10 @@ export function GetInfo(
   queryName?: string,
   queryType?: Type<unknown>,
 ) {
-  const decorators: Array<ClassDecorator | MethodDecorator | PropertyDecorator> = [Get(path)];
+  const decorators: Array<ClassDecorator | MethodDecorator | PropertyDecorator> = [
+    Get(path),
+    SetMetadata(ROUTE_ACTION_METADATA, PermissionEnum.Read),
+  ];
 
   decorators.push(...getSharedDecorators(path, info, paramNames));
 

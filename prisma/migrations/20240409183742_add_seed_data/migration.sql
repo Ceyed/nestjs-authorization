@@ -26,7 +26,7 @@ INSERT INTO groups ("id", name, "roleId", scopes, permissions, "updatedAt")
 VALUES (gen_random_uuid(), 'Default TeamLeader Group', '8100ec7f-1f7c-4788-aef1-05454b595d84', '{"Role","User"}', '{"Create","Read","Update"}', CURRENT_TIMESTAMP);
 
 INSERT INTO groups ("id", name, "roleId", scopes, permissions, "updatedAt") 
-VALUES (gen_random_uuid(), 'default Employee Group', 'b9f0565a-1460-4e13-ba21-9b16c11e0021', '{"Role","User"}', '{"Create","Read","Update"}', CURRENT_TIMESTAMP);
+VALUES (gen_random_uuid(), 'Default Employee Group', 'b9f0565a-1460-4e13-ba21-9b16c11e0021', '{"Role","User"}', '{"Create","Read","Update"}', CURRENT_TIMESTAMP);
 
 INSERT INTO groups ("id", name, "roleId", scopes, permissions, "updatedAt") 
 VALUES (gen_random_uuid(), 'Default Supervisor Group', '28a04c8c-f0b4-48c6-98af-732c2d67bc7e', '{"Role","User"}', '{"Read"}', CURRENT_TIMESTAMP);

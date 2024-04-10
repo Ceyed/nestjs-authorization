@@ -30,7 +30,7 @@ export const defaultUserGroups = [
     roleId: TEAM_LEADER_ROLE_ID,
   },
   {
-    name: 'default Employee Group',
+    name: 'Default Employee Group',
     role: RoleTypeEnum.Employee,
     scopes: [AppModulesEnum.Role, AppModulesEnum.User],
     permissions: [PermissionEnum.Create, PermissionEnum.Read, PermissionEnum.Update],

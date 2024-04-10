@@ -1,4 +1,7 @@
-import { MODULE_CUSTOM_METADATA, ROUTE_METADATA } from '@libs/constants/role-metadata.constant';
+import {
+  MODULE_CUSTOM_METADATA,
+  ROUTE_TYPE_METADATA,
+} from '@libs/constants/role-metadata.constant';
 import { AppModulesEnum } from '@libs/enums/app-modules.enum';
 import { RouteTypeEnum } from '@libs/enums/route-type.enum';
 import { Controller, SetMetadata, UseGuards, applyDecorators } from '@nestjs/common';
@@ -6,7 +9,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SwaggerEnumType } from '@nestjs/swagger/dist/types/swagger-enum.type';
 
 import { ClassConstructor } from 'class-transformer';
-import { AuthenticationGuard } from '../guards';
+import { AuthenticationGuard, RolesGuard } from '../guards';
 
 export function AppController(
   module: AppModulesEnum,
@@ -35,11 +38,11 @@ function _getDecoratorAndGuards(
   const path: string = _getPathPrefix(routeType) + controllerPath;
 
   if (routeType !== RouteTypeEnum.PUBLIC) {
-    guards.push(AuthenticationGuard);
+    guards.push(AuthenticationGuard, RolesGuard);
     decorators.push(ApiBearerAuth());
   }
 
-  decorators.push(SetMetadata(ROUTE_METADATA, routeType), Controller(path));
+  decorators.push(SetMetadata(ROUTE_TYPE_METADATA, routeType), Controller(path));
   return [decorators, guards];
 }
 

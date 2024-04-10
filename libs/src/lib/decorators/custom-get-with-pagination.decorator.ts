@@ -1,12 +1,16 @@
-import { applyDecorators, Get, Type } from '@nestjs/common';
+import { Get, SetMetadata, Type, applyDecorators } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation } from '@nestjs/swagger';
 import { ExternalDocumentationObject } from '@nestjs/swagger/dist/interfaces/open-api-spec.interface';
-import { applyRouteParams } from '../utils';
-import { ApiFilterQuery } from './api-filter-query';
+import { PermissionEnum } from '@prisma/client';
+import { ROUTE_ACTION_METADATA } from '../constants/role-metadata.constant';
+import {
+  ApiCustomParamOption,
+  ApiFilterQuery,
+  ApiQueryOrder,
+  ApiQueryPagination,
+} from '../decorators';
+import { applyRouteParams } from '../utils/apply-route-params';
 import { ApiPaginatedResponse } from './api-paginated-response';
-import { ApiQueryOrder } from './api-query-order.decorator';
-import { ApiQueryPagination } from './api-query-pagination.decorator';
-import { ApiCustomParamOption } from './custom-get.decorator';
 
 /**
  *
@@ -33,14 +37,10 @@ export function GetWithPagination(
 ) {
   const decorators: Array<ClassDecorator | MethodDecorator | PropertyDecorator> = [
     Get(path !== '/' && path !== '' ? `/paginated/${path}` : 'paginated'),
+    SetMetadata(ROUTE_ACTION_METADATA, PermissionEnum.Read),
   ];
-  decorators.push(
-    ApiQueryOrder(),
-    ApiQueryPagination(),
-    ApiOperation({
-      ...info,
-    }),
-  );
+  decorators.push(ApiQueryOrder(), ApiQueryPagination(), ApiOperation(info));
+
   if (overrideResponse) {
     decorators.push(
       ApiOkResponse({
@@ -50,11 +50,13 @@ export function GetWithPagination(
   } else {
     decorators.push(ApiPaginatedResponse(paginationEntityResponse));
   }
+
   if (queryName) {
     decorators.push(ApiFilterQuery(queryName, queryType as Function));
   }
   if (paramNames && paramNames?.length) {
     decorators.push(...applyRouteParams(path, paramNames));
   }
+
   return applyDecorators(...decorators);
 }
