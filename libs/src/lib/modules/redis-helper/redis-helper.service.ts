@@ -59,14 +59,18 @@ export class RedisHelperService {
    * @param key: Your redis key
    * @param getDataCallback: The function and repo query to get your data
    */
-  async getFromCacheOrDb<T>(key: string, getDataCallback: () => Promise<T>): Promise<T> {
-    const valueFromRedis = await this.getCache<T>(key);
+  async getFromCacheOrDb<T>(
+    key: string,
+    getDataCallback: () => Promise<T>,
+    ttl?: number,
+  ): Promise<T> {
+    const valueFromRedis: T = await this.getCache<T>(key);
     if (valueFromRedis) return valueFromRedis;
 
-    const valueFromDb = await getDataCallback();
+    const valueFromDb: T = await getDataCallback();
     if (!valueFromDb) return;
 
-    this.setCache<T>(key, valueFromDb);
+    this.setCache<T>(key, valueFromDb, ttl);
     return valueFromDb;
   }
 }

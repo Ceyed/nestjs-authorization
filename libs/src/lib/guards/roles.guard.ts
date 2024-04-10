@@ -36,9 +36,8 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     );
 
-    const userGroups: Record<string, string[]>[] = await this._roleGuardService.getUserRoleGuards(
-      user.sub,
-    );
+    const userGroups: Record<string, string[]>[] =
+      await this._roleGuardService.getUserRoleGuards(user);
     const userHasNecessaryScope: Record<string, string[]> = userGroups.find((item) =>
       item.scopes.includes(scopeOfClass),
     );
