@@ -22,7 +22,7 @@ export class RoleEntity extends BaseEntity {
   priority: number;
 
   @ApiProperty({ type: 'enum', enum: RoleTypeEnum })
-  @IsEnum(RoleTypeEnum)
+  @IsEnum(RoleTypeEnum, { each: true })
   type: RoleTypeEnum;
 
   @ApiPropertyOptional()

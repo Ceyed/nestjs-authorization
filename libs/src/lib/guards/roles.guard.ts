@@ -1,3 +1,4 @@
+import { RoleGuardService } from '@libs/modules/role-guard';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import {
@@ -7,11 +8,14 @@ import {
   ROUTE_TYPE_METADATA,
 } from '../constants';
 import { AppModulesEnum, PermissionEnum, RouteTypeEnum } from '../enums';
-import { Base64ToUserGroups } from '../utils';
+import { UserAuthModel } from '../models';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
-  constructor(private readonly _reflector: Reflector) {}
+  constructor(
+    private readonly _reflector: Reflector,
+    private readonly _roleGuardService: RoleGuardService,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const routeType = this._reflector.get<RouteTypeEnum>(ROUTE_TYPE_METADATA, context.getClass());
@@ -20,7 +24,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const user = request[REQUEST_USER_KEY];
+    const user: UserAuthModel = request[REQUEST_USER_KEY];
     if (!user) return false;
 
     const actionType = this._reflector.get<PermissionEnum>(
@@ -32,7 +36,9 @@ export class RolesGuard implements CanActivate {
       context.getClass(),
     );
 
-    const userGroups: Record<string, string[]>[] = Base64ToUserGroups(user.groups);
+    const userGroups: Record<string, string[]>[] = await this._roleGuardService.getUserRoleGuards(
+      user.sub,
+    );
     const userHasNecessaryScope: Record<string, string[]> = userGroups.find((item) =>
       item.scopes.includes(scopeOfClass),
     );

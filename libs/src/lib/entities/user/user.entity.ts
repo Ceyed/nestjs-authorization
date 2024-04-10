@@ -4,6 +4,7 @@ import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { BaseEntity } from '../base.entity';
 import { GroupEntity } from '../group/group.entity';
 import { RoleEntity } from '../role/role.entity';
+import { UserGroup } from '../user-group/user-group.entity';
 
 export class UserEntity extends BaseEntity {
   @ApiProperty()
@@ -30,5 +31,5 @@ export class UserEntity extends BaseEntity {
   role?: RoleEntity;
 
   @ApiPropertyOptional({ type: () => [GroupEntity] })
-  userGroups?: { group: GroupEntity }[];
+  userGroups?: Partial<UserGroup>[];
 }

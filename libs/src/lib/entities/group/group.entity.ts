@@ -13,11 +13,11 @@ export class GroupEntity extends BaseEntity {
   name: string;
 
   @ApiProperty({ type: 'enum', enum: AppModulesEnum })
-  @IsEnum(AppModulesEnum)
+  @IsEnum(AppModulesEnum, { each: true })
   scopes: AppModulesEnum[];
 
   @ApiProperty({ type: 'enum', enum: PermissionEnum })
-  @IsEnum(PermissionEnum)
+  @IsEnum(PermissionEnum, { each: true })
   permissions: PermissionEnum[];
 
   @ApiProperty()

@@ -7,6 +7,7 @@ import { UserModule } from 'src/modules/user/user.module';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { appConfig } from './config/app.config';
+import { redisConfig } from './config/redis.config';
 
 @Module({
   imports: [

@@ -14,7 +14,6 @@ import { jwtConfig } from 'src/app/config/jwt.config';
 import { HashingService } from './hashing/hashing.service';
 import { InvalidatedRefreshTokenError } from './refresh-token-ids-storage/invalidated-refresh-token-error.storage';
 import { RefreshTokenIdsStorage } from './refresh-token-ids-storage/refresh-token-ids.storage';
-import { UserGroupsToBase64 } from '@libs/utils/user-groups-to-base64.util';
 
 @Injectable()
 export class AuthenticationService {
@@ -116,7 +115,6 @@ export class AuthenticationService {
         sub: user.id,
         username: user.username,
         roleType: user.role.type,
-        groups: UserGroupsToBase64(user.userGroups),
       }),
       this._signToken(user.id, this._jwtConfig.refreshTokenTtl, {
         refreshTokenId,
