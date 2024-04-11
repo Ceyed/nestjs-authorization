@@ -1,4 +1,3 @@
-import { EMPLOYEE_ROLE_ID } from '@libs/constants/roles-ids.constant';
 import { uuid } from '@libs/constants/uuid.constant';
 import { RefreshTokenDto, SignInDto, SignUpDto } from '@libs/dtos/auth';
 import { AccessTokenAndRefreshTokenDto } from '@libs/dtos/common';
@@ -9,8 +8,8 @@ import { PrismaService } from '@libs/modules/prisma';
 import { ConflictException, Inject, Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { jwtConfig } from '@src/configs/jwt.config';
 import { randomUUID } from 'crypto';
-import { jwtConfig } from 'src/app/config/jwt.config';
 import { HashingService } from './hashing/hashing.service';
 import { InvalidatedRefreshTokenError } from './refresh-token-ids-storage/invalidated-refresh-token-error.storage';
 import { RefreshTokenIdsStorage } from './refresh-token-ids-storage/refresh-token-ids.storage';
@@ -28,8 +27,8 @@ export class AuthenticationService {
 
   async signUp(signUpDto: SignUpDto): Promise<UpdateResultModel> {
     try {
-      const { id: groupId } = await this._prismaService.group.findFirstOrThrow({
-        where: { roleId: EMPLOYEE_ROLE_ID },
+      const { id: groupId, roleId } = await this._prismaService.group.findFirstOrThrow({
+        where: { isDefault: true },
       });
 
       const hashedPassword: string = await this._hashingService.hash(
@@ -40,7 +39,7 @@ export class AuthenticationService {
           name: signUpDto.name,
           username: signUpDto.username,
           password: hashedPassword,
-          roleId: EMPLOYEE_ROLE_ID,
+          roleId,
         },
       });
       await this._prismaService.userGroup.create({
@@ -114,6 +113,7 @@ export class AuthenticationService {
       this._signToken<Partial<UserAuthModel>>(user.id, this._jwtConfig.accessTokenTtl, {
         sub: user.id,
         username: user.username,
+        roleId: user.roleId,
         roleType: user.role.type,
       }),
       this._signToken(user.id, this._jwtConfig.refreshTokenTtl, {

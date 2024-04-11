@@ -14,7 +14,7 @@ export class UserNormalController {
 
   @GetInfo('profile', null, {
     summary: 'get current user profile',
-    description: 'this route returns the the current user profile',
+    description: 'this route returns the current user profile',
     outputType: UserEntity,
   })
   getOne(@User() user: UserAuthModel): Promise<UserEntity> {

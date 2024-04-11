@@ -3,7 +3,6 @@ import { RedisPrefixesEnum } from '@libs/enums/redis-prefixes.enum';
 import { RedisSubPrefixesEnum } from '@libs/enums/redis-sub-prefixes.enum';
 import { Injectable } from '@nestjs/common';
 import Redis, { ChainableCommander } from 'ioredis';
-import { uuid } from '../../constants';
 
 @Injectable()
 export class RedisHelperService {
@@ -13,7 +12,11 @@ export class RedisHelperService {
     return this._redisClient.multi();
   }
 
-  getStandardKey(keyPrefix: RedisPrefixesEnum, subPrefix: RedisSubPrefixesEnum, id: uuid): string {
+  getStandardKey(
+    keyPrefix: RedisPrefixesEnum,
+    subPrefix: RedisSubPrefixesEnum,
+    id: string,
+  ): string {
     return keyPrefix + ':' + subPrefix + ':' + id;
   }
 

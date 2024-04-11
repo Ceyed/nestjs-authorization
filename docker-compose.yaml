@@ -1,18 +1,18 @@
 version: '3.8'
 
 services:
-  app:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    restart: always
-    ports:
-      - '${PORT}:4321'
-    depends_on:
-      - postgres
-      - redis
-    networks:
-      - app-network
+  # app:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #   restart: always
+  #   ports:
+  #     - '${PORT}:4321'
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #   networks:
+  #     - app-network
 
   postgres:
     image: postgres:latest
@@ -32,9 +32,9 @@ services:
   redis:
     image: redis
     container_name: redis
+    restart: always
     ports:
       - '${REDIS_PORT}:6379'
-    restart: always
     volumes:
       - redis-data:/data
     networks:

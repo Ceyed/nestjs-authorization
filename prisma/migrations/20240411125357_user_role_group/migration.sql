@@ -1,15 +1,17 @@
 -- CreateEnum
-CREATE TYPE "PermissionEnum" AS ENUM ('CREATE', 'READ', 'UPDATE', 'DELETE');
+CREATE TYPE "PermissionEnum" AS ENUM ('All', 'Create', 'Read', 'Update', 'Delete');
 
 -- CreateEnum
-CREATE TYPE "AppModulesEnum" AS ENUM ('USER', 'ROLE', 'PERMISSION');
+CREATE TYPE "AppModulesEnum" AS ENUM ('All', 'User', 'Role', 'Permission', 'Groups', 'Auth');
+
+-- CreateEnum
+CREATE TYPE "RoleTypeEnum" AS ENUM ('Administrator', 'Manager', 'TeamLeader', 'Employee', 'Supervisor');
 
 -- CreateTable
 CREATE TABLE "users" (
     "id" UUID NOT NULL,
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) NOT NULL,
-    "deletedAt" TIMESTAMP(6),
     "name" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
@@ -23,9 +25,10 @@ CREATE TABLE "roles" (
     "id" UUID NOT NULL,
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) NOT NULL,
-    "deletedAt" TIMESTAMP(6),
     "name" TEXT NOT NULL,
     "luckyNumber" INTEGER NOT NULL,
+    "type" "RoleTypeEnum" NOT NULL,
+    "priority" INTEGER NOT NULL,
 
     CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
 );
@@ -35,10 +38,10 @@ CREATE TABLE "groups" (
     "id" UUID NOT NULL,
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) NOT NULL,
-    "deletedAt" TIMESTAMP(6),
     "name" TEXT NOT NULL,
+    "scopes" "AppModulesEnum"[],
     "permissions" "PermissionEnum"[],
-    "scope" "AppModulesEnum" NOT NULL,
+    "isDefault" BOOLEAN NOT NULL DEFAULT false,
     "roleId" UUID NOT NULL,
 
     CONSTRAINT "groups_pkey" PRIMARY KEY ("id")
@@ -46,6 +49,8 @@ CREATE TABLE "groups" (
 
 -- CreateTable
 CREATE TABLE "users_groups" (
+    "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(6) NOT NULL,
     "userId" UUID NOT NULL,
     "groupId" UUID NOT NULL,
 
@@ -54,9 +59,6 @@ CREATE TABLE "users_groups" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
-
--- CreateIndex
-CREATE UNIQUE INDEX "users_roleId_key" ON "users"("roleId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "roles_name_key" ON "roles"("name");
