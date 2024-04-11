@@ -52,6 +52,9 @@ CREATE TABLE "groups" (
 
 -- CreateTable
 CREATE TABLE "users_groups" (
+    "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(6) NOT NULL,
+    "deletedAt" TIMESTAMP(6),
     "userId" UUID NOT NULL,
     "groupId" UUID NOT NULL,
 
@@ -60,9 +63,6 @@ CREATE TABLE "users_groups" (
 
 -- CreateIndex
 CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
-
--- CreateIndex
-CREATE UNIQUE INDEX "users_roleId_key" ON "users"("roleId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "roles_name_key" ON "roles"("name");

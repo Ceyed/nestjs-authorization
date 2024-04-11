@@ -38,6 +38,19 @@ export class RolesGuard implements CanActivate {
 
     const userGroups: Record<string, string[]>[] =
       await this._roleGuardService.getUserRoleGuards(user);
+
+    if (userGroups.some((role) => role.scopes.includes(AppModulesEnum.All))) {
+      // * All scope access
+      if (
+        userGroups.some(
+          (role) =>
+            role.permissions.includes(PermissionEnum.All) || role.permissions.includes(actionType),
+        )
+      ) {
+        return true;
+      }
+    }
+
     const userHasNecessaryScope: Record<string, string[]> = userGroups.find((item) =>
       item.scopes.includes(scopeOfClass),
     );

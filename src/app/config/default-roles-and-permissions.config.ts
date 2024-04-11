@@ -36,15 +36,10 @@ export const defaultUserGroups = [
     isDefault: false,
   },
   {
-    name: 'default Employee Group',
+    name: 'Default Employee Group',
     role: RoleTypeEnum.Employee,
     scopes: [AppModulesEnum.Role, AppModulesEnum.User],
-    permissions: [
-      PermissionEnum.Create,
-      PermissionEnum.Read,
-      PermissionEnum.Update,
-      AppModulesEnum.Auth,
-    ],
+    permissions: [PermissionEnum.Read, PermissionEnum.Update, AppModulesEnum.Auth],
     isDefault: true,
   },
   {

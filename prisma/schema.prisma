@@ -19,7 +19,7 @@ model User {
   username    String            @unique
   password    String
 
-  roleId      String            @unique @db.Uuid
+  roleId      String            @db.Uuid
   role        Role              @relation(fields: [roleId], references: [id])
 
   userGroups  UserGroup[]
@@ -62,6 +62,10 @@ model Group {
 model UserGroup {
   @@map("users_groups")
   @@id([userId, groupId])
+
+  createdAt     DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime        @updatedAt @db.Timestamp(6)
+  deletedAt     DateTime?       @db.Timestamp(6)
 
   userId        String          @db.Uuid
   user          User            @relation(fields: [userId], references: [id])
