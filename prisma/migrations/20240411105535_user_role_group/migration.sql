@@ -1,8 +1,11 @@
 -- CreateEnum
-CREATE TYPE "PermissionEnum" AS ENUM ('CREATE', 'READ', 'UPDATE', 'DELETE');
+CREATE TYPE "PermissionEnum" AS ENUM ('All', 'Create', 'Read', 'Update', 'Delete');
 
 -- CreateEnum
-CREATE TYPE "AppModulesEnum" AS ENUM ('USER', 'ROLE', 'PERMISSION');
+CREATE TYPE "AppModulesEnum" AS ENUM ('All', 'User', 'Role', 'Permission', 'Groups', 'Auth');
+
+-- CreateEnum
+CREATE TYPE "RoleTypeEnum" AS ENUM ('Administrator', 'Manager', 'TeamLeader', 'Employee', 'Supervisor');
 
 -- CreateTable
 CREATE TABLE "users" (
@@ -26,6 +29,8 @@ CREATE TABLE "roles" (
     "deletedAt" TIMESTAMP(6),
     "name" TEXT NOT NULL,
     "luckyNumber" INTEGER NOT NULL,
+    "type" "RoleTypeEnum" NOT NULL,
+    "priority" INTEGER NOT NULL,
 
     CONSTRAINT "roles_pkey" PRIMARY KEY ("id")
 );
@@ -37,8 +42,9 @@ CREATE TABLE "groups" (
     "updatedAt" TIMESTAMP(6) NOT NULL,
     "deletedAt" TIMESTAMP(6),
     "name" TEXT NOT NULL,
+    "scopes" "AppModulesEnum"[],
     "permissions" "PermissionEnum"[],
-    "scope" "AppModulesEnum" NOT NULL,
+    "isDefault" BOOLEAN NOT NULL DEFAULT false,
     "roleId" UUID NOT NULL,
 
     CONSTRAINT "groups_pkey" PRIMARY KEY ("id")

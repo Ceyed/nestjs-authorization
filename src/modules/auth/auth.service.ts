@@ -28,8 +28,8 @@ export class AuthenticationService {
 
   async signUp(signUpDto: SignUpDto): Promise<UpdateResultModel> {
     try {
-      const { id: groupId } = await this._prismaService.group.findFirstOrThrow({
-        where: { roleId: EMPLOYEE_ROLE_ID },
+      const { id: groupId, roleId } = await this._prismaService.group.findFirstOrThrow({
+        where: { isDefault: true },
       });
 
       const hashedPassword: string = await this._hashingService.hash(
@@ -40,7 +40,7 @@ export class AuthenticationService {
           name: signUpDto.name,
           username: signUpDto.username,
           password: hashedPassword,
-          roleId: EMPLOYEE_ROLE_ID,
+          roleId,
         },
       });
       await this._prismaService.userGroup.create({

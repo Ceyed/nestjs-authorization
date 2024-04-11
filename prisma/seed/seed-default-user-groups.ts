@@ -14,6 +14,7 @@ export const defaultUserGroups = [
     scopes: [AppModulesEnum.All],
     permissions: [PermissionEnum.All],
     roleId: ADMINISTRATOR_ROLE_ID,
+    isDefault: false,
   },
   {
     name: 'Default Manager Group',
@@ -21,6 +22,7 @@ export const defaultUserGroups = [
     scopes: [AppModulesEnum.User, AppModulesEnum.Role, AppModulesEnum.Permission],
     permissions: [PermissionEnum.All],
     roleId: MANAGER_ROLE_ID,
+    isDefault: false,
   },
   {
     name: 'Default TeamLeader Group',
@@ -28,6 +30,7 @@ export const defaultUserGroups = [
     scopes: [AppModulesEnum.Role, AppModulesEnum.User],
     permissions: [PermissionEnum.Create, PermissionEnum.Read, PermissionEnum.Update],
     roleId: TEAM_LEADER_ROLE_ID,
+    isDefault: false,
   },
   {
     name: 'Default Employee Group',
@@ -35,6 +38,7 @@ export const defaultUserGroups = [
     scopes: [AppModulesEnum.Role, AppModulesEnum.User],
     permissions: [PermissionEnum.Create, PermissionEnum.Read, PermissionEnum.Update],
     roleId: EMPLOYEE_ROLE_ID,
+    isDefault: true,
   },
   {
     name: 'Default Supervisor Group',
@@ -42,5 +46,6 @@ export const defaultUserGroups = [
     scopes: [AppModulesEnum.Role, AppModulesEnum.User],
     permissions: [PermissionEnum.Read],
     roleId: SUPERVISOR_ROLE_ID,
+    isDefault: false,
   },
 ];
