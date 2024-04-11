@@ -113,6 +113,7 @@ export class AuthenticationService {
       this._signToken<Partial<UserAuthModel>>(user.id, this._jwtConfig.accessTokenTtl, {
         sub: user.id,
         username: user.username,
+        roleId: user.roleId,
         roleType: user.role.type,
       }),
       this._signToken(user.id, this._jwtConfig.refreshTokenTtl, {

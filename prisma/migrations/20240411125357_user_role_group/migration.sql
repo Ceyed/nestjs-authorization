@@ -12,7 +12,6 @@ CREATE TABLE "users" (
     "id" UUID NOT NULL,
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) NOT NULL,
-    "deletedAt" TIMESTAMP(6),
     "name" TEXT NOT NULL,
     "username" TEXT NOT NULL,
     "password" TEXT NOT NULL,
@@ -26,7 +25,6 @@ CREATE TABLE "roles" (
     "id" UUID NOT NULL,
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) NOT NULL,
-    "deletedAt" TIMESTAMP(6),
     "name" TEXT NOT NULL,
     "luckyNumber" INTEGER NOT NULL,
     "type" "RoleTypeEnum" NOT NULL,
@@ -40,7 +38,6 @@ CREATE TABLE "groups" (
     "id" UUID NOT NULL,
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) NOT NULL,
-    "deletedAt" TIMESTAMP(6),
     "name" TEXT NOT NULL,
     "scopes" "AppModulesEnum"[],
     "permissions" "PermissionEnum"[],
@@ -54,7 +51,6 @@ CREATE TABLE "groups" (
 CREATE TABLE "users_groups" (
     "createdAt" TIMESTAMP(6) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(6) NOT NULL,
-    "deletedAt" TIMESTAMP(6),
     "userId" UUID NOT NULL,
     "groupId" UUID NOT NULL,
 
