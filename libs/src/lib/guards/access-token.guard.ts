@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
+import { jwtConfig } from '@src/configs/jwt.config';
 import { Request } from 'express';
-import { jwtConfig } from 'src/app/config/jwt.config';
 import { REQUEST_USER_KEY } from '../constants';
 import { UserAuthModel } from '../models';
 
