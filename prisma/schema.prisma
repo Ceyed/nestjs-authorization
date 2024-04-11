@@ -50,7 +50,7 @@ model Group {
   permissions   PermissionEnum[]
   isDefault     Boolean         @default(false)
 
-  roleId        String          @unique @db.Uuid
+  roleId        String          @db.Uuid
   role          Role            @relation(fields: [roleId], references: [id])
 
   userGroups    UserGroup[]
