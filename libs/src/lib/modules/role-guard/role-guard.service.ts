@@ -4,7 +4,7 @@ import { UserEntity } from '@libs/entities/user/user.entity';
 import { RedisPrefixesEnum } from '@libs/enums/redis-prefixes.enum';
 import { RedisSubPrefixesEnum } from '@libs/enums/redis-sub-prefixes.enum';
 import { UserAuthModel } from '@libs/models/active-user-data.model';
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma';
 import { RedisHelperService } from '../redis-helper/redis-helper.service';
 
@@ -14,6 +14,11 @@ export class RoleGuardService {
     private readonly _prismaService: PrismaService,
     private readonly _redisHelperService: RedisHelperService,
   ) {}
+
+  async getUserOrFail(userId: uuid): Promise<void> {
+    const user: UserEntity = await this._prismaService.user.findFirst({ where: { id: userId } });
+    if (!user) throw new NotFoundException('User not founded!');
+  }
 
   async getUserRoleGuards(userAuth: UserAuthModel): Promise<Record<string, string[]>[]> {
     const redisKey: string = this._getRedisKey(userAuth.sub);

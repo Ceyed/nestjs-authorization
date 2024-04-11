@@ -1,4 +1,3 @@
-import { EMPLOYEE_ROLE_ID } from '@libs/constants/roles-ids.constant';
 import { uuid } from '@libs/constants/uuid.constant';
 import { RefreshTokenDto, SignInDto, SignUpDto } from '@libs/dtos/auth';
 import { AccessTokenAndRefreshTokenDto } from '@libs/dtos/common';
