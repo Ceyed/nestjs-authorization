@@ -1,7 +1,8 @@
 import { uuid } from '@libs/constants/uuid.constant';
 import { OrderDto, PaginationDto } from '@libs/dtos/common';
-import { CreateGroupDto, FilterGroupDto } from '@libs/dtos/group';
+import { CreateGroupDto, FilterGroupDto, UpdateGroupDto } from '@libs/dtos/group';
 import { GroupEntity } from '@libs/entities/group/group.entity';
+import { RoleEntity } from '@libs/entities/role/role.entity';
 import { UserEntity } from '@libs/entities/user/user.entity';
 import { RedisPrefixesEnum } from '@libs/enums/redis-prefixes.enum';
 import { RedisSubPrefixesEnum } from '@libs/enums/redis-sub-prefixes.enum';
@@ -14,7 +15,6 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
-import { UpdateGroupDto } from './../../../libs/src/lib/dtos/group/update-group.dto';
 
 @Injectable()
 export class GroupService {
@@ -64,7 +64,8 @@ export class GroupService {
     return group;
   }
 
-  create(createGroupDto: CreateGroupDto): Promise<GroupEntity> {
+  async create(createGroupDto: CreateGroupDto): Promise<GroupEntity> {
+    await this._createGroupValidation(createGroupDto.roleId);
     this._removeGroupFromRedis();
     return this._prismaService.group.create({ data: createGroupDto });
   }
@@ -83,6 +84,7 @@ export class GroupService {
       where: { id },
       data: updateGroupDto,
     });
+    this._removeGroupFromRedis();
     return { status: !!updateResult };
   }
 
@@ -96,6 +98,7 @@ export class GroupService {
       where: { id },
       data: { isDefault: true },
     });
+    this._removeGroupFromRedis();
     return { status: !!updateResult };
   }
 
@@ -121,6 +124,14 @@ export class GroupService {
     id: uuid,
     userId: uuid,
   ): Promise<[GroupEntity, UserEntity]> {
+    const userGroupExists: number = await this._prismaService.userGroup.count({
+      where: {
+        groupId: id,
+        userId,
+      },
+    });
+    if (!!userGroupExists) throw new ConflictException('This group already assigned to this user');
+
     const group: GroupEntity = await this.getOneOrFail(id);
     const user: UserEntity = await this._prismaService.user.findFirst({ where: { id: userId } });
     if (!user) {
@@ -146,5 +157,12 @@ export class GroupService {
       RedisSubPrefixesEnum.All,
     );
     this._redisHelperService.deleteByPattern(pattern);
+  }
+
+  private async _createGroupValidation(roleId: uuid): Promise<void> {
+    const role: RoleEntity = await this._prismaService.role.findFirst({
+      where: { id: roleId },
+    });
+    if (!role) throw new NotFoundException('Role not found!');
   }
 }

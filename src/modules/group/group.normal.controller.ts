@@ -36,12 +36,12 @@ export class GroupNormalController {
     @QueryOrder() order: OrderDto,
     @Query('filters') filters: FilterGroupDto,
   ): Promise<Paginate<GroupEntity>> {
-    const [roles, total] = await this._groupService.getAllWithPagination(
+    const [groups, total] = await this._groupService.getAllWithPagination(
       pagination,
       order,
       filters,
     );
-    return new Paginate(roles, pagination.getPagination(total));
+    return new Paginate(groups, pagination.getPagination(total));
   }
 
   @GetInfo(':id', ['id'], {
