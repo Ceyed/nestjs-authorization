@@ -22,13 +22,33 @@
 
 ## Setup
 
-To get started, simply run the following command:
+To get started, you have two options:
+
+### Automatic Installation
+
+Simply run the following command:
+
+```bash
+./install.sh
+```
+
+This script will set up the environment and start the application.
+
+### Manual Installation
+
+First, copy `.env` file from `.env.sample`:
+
+```bash
+cp .env.sample .env
+```
+
+Next, start the application using Docker Compose:
 
 ```bash
 docker compose up --build -d
 ```
 
-Feel free to check the `.env` file if you need to make any adjustments
+Feel free to review and adjust the settings in the .env file as needed.
 
 ## A brief explanation
 
@@ -184,7 +204,25 @@ Additionally, various custom functions, classes and modules have been developed 
 
 ## راه اندازی
 
-برای شروع کافیه دستور زیر رو وارد کنید:
+برای شروع، دو روش زیر را دارید:
+
+### نصب خودکار
+
+به راحتی دستور زیر را اجرا کنید:
+
+```bash
+./install.sh
+```
+
+### نصب دستی
+
+ابتدا فایل `.env` را از فایل `.env.sample` کپی کنید:
+
+```bash
+cp .env.sample .env
+```
+
+سپس، برنامه را با استفاده از Docker Compose راه‌اندازی کنید:
 
 ```bash
 docker compose up --build -d
