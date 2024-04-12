@@ -2,6 +2,7 @@ import { uuid } from '@libs/constants/uuid.constant';
 import { RefreshTokenDto, SignInDto, SignUpDto } from '@libs/dtos/auth';
 import { AccessTokenAndRefreshTokenDto } from '@libs/dtos/common';
 import { UserEntity } from '@libs/entities/user/user.entity';
+import { RoleTypeEnum } from '@libs/enums/role-type.enum';
 import { UserAuthModel } from '@libs/models/active-user-data.model';
 import { UpdateResultModel } from '@libs/models/update-result.model';
 import { PrismaService } from '@libs/modules/prisma';
@@ -114,7 +115,7 @@ export class AuthenticationService {
         sub: user.id,
         username: user.username,
         roleId: user.roleId,
-        roleType: user.role.type,
+        roleType: user.role.type as RoleTypeEnum,
       }),
       this._signToken(user.id, this._jwtConfig.refreshTokenTtl, {
         refreshTokenId,
