@@ -19,6 +19,7 @@
 - [Give access or revoke access](#give-access-or-revoke-access)
 - [Modules](#modules)
 - [Tools](#tools)
+- [Challenges](#challenges)
 
 ## Setup
 
@@ -185,6 +186,25 @@ Its only purpose is to serve as an empty module for testing grouping and assigni
 
 Additionally, various custom functions, classes and modules have been developed to enhance the overall process, which can be found in the `Libs` folder.
 
+## Challenges
+
+1. Creating a RBAC System
+   - Problem: I didn't build a full RBAC system before. How can I create a role-based access control (RBAC) system?
+   - Full Description: I needed to implement an RBAC system to manage access control in my application. However, I lacked prior experience in building a full RBAC system.
+   - Approach: Spent approximately 1 and a half days researching various methods and selecting the most suitable one for the project requirements.
+
+2. Container Networking
+   - Problem: How do my containers connect to each other? How can I establish a shared network between containers?
+   - Full Description: I encountered issues with container networking when trying to connect my application container with PostgreSQL and Redis containers. I'm using PostgreSQL and Redis Docker containers in the application. However, when I dockerized my app, it couldn't connect to the database and Redis by default.
+   - Approach: Spent approximately 6 hours researching Docker documentation and browsing through community discussions to understand container networking concepts and how to create a shared network so that all containers can communicate with each other.
+
+3. Managing .env File
+   - Problem: Not copying the `.env` file in time for containers to use.
+   - Full Description: I faced issues with the timing of copying the `.env` file into the container before it was needed by other containers.
+   - Approach: Developed a bash script to ensure the `.env` file is copied before executing other commands, ensuring that containers have access to the required environment variables.
+
+<br />
+
 <p align="center">
 <strong>🐼 Any contributions aimed at enhancing the system is welcome 🐼</strong>
 </p>
@@ -201,6 +221,7 @@ Additionally, various custom functions, classes and modules have been developed 
 - [انتصاب و لغر دسترسی](#انتصاب-و-لغر-دسترسی)
 - [ماژول ها](#ماژول-ها)
 - [ابزار](#ابزار)
+- [چالش ها](#چالش-ها)
 
 ## راه اندازی
 
@@ -362,6 +383,25 @@ docker compose up --build -d
 - **Documentation:** Swagger
 
 همچنین بسیاری تابع، کلاس و ماژول های کمکی برای پروسه ساده تر و پیشرفته تر نوشته شده اند که می توانید تمام آنها را در پوشه `Libs` بررسی کنید
+
+## چالش ها
+
+1. ایجاد یک سیستم RBAC
+    - مشکل: من قبلا یک سیستم RBAC کامل نساختم. چگونه می توانم یک سیستم کنترل دسترسی مبتنی بر نقش (RBAC) ایجاد کنم؟
+    - توضیحات کامل: من نیاز به پیاده سازی یک سیستم RBAC برای مدیریت کنترل دسترسی در برنامه خود داشتم. با این حال، من تجربه قبلی در ساخت یک سیستم RBAC کامل رو نداشتم
+    - رویکرد: تقریباً 1 و نیم روز را صرف تحقیق در مورد روش‌های مختلف و انتخاب مناسب‌ترین روش برای نیازهای پروژه کردم
+
+2. ارتباط کانتینر ها
+    - مشکل: متصل نبودن کانتینر ها با یکدیگر
+    - توضیحات کامل: هنگام تلاش برای اتصال کانتینر برنامه خود با کانتینرهای PostgreSQL و Redis، با مشکل شبکه کانتینر مواجه شدم. من از کانتینر های PostgreSQL و Redis در برنامه استفاده می کنم. با این حال، وقتی برنامه‌ام را dockerize کردم، به طور پیش‌فرض نمی‌توانست به Postgresql و Redis متصل شود.
+    - رویکرد: تقریباً 6 ساعت را صرف تحقیق در مستندات Docker و مرور در بحث های community برای درک مفاهیم شبکه کانتینر و نحوه ایجاد یک شبکه اشتراکی کردم تا همه کانتینرها بتوانند با یکدیگر ارتباط برقرار کنند.
+
+3. مدیریت فایل env
+    - مشکل: به موقع کپی نشدن فایل ".env" برای استفاده در کانتینرها
+    - توضیحات کامل: قبل از اینکه فایل ".env" کپی شود، باقی کانتینر ها سعی در خواندن آن داشتند
+    - رویکرد: یک اسکریپت bash نوشتم که فایل ".env" قبل از استفاده کانتینر های دیگر کپی کرده، که از  اینکه کانتینرها به متغیرهای محیطی مورد نیاز دسترسی دارند اطمینان داشته باشم
+
+<br />
 
 <p align="center">
 <strong>🐼 از هر گونه مشارکتی که با هدف تقویت سیستم انجام شود، استقبال می شود 🐼</strong>
