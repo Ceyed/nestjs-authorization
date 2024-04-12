@@ -124,6 +124,14 @@ export class GroupService {
     id: uuid,
     userId: uuid,
   ): Promise<[GroupEntity, UserEntity]> {
+    const userGroupExists: number = await this._prismaService.userGroup.count({
+      where: {
+        groupId: id,
+        userId,
+      },
+    });
+    if (!!userGroupExists) throw new ConflictException('This group already assigned to this user');
+
     const group: GroupEntity = await this.getOneOrFail(id);
     const user: UserEntity = await this._prismaService.user.findFirst({ where: { id: userId } });
     if (!user) {
