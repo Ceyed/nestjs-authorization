@@ -50,6 +50,8 @@ docker compose up --build -d
 
 Feel free to review and adjust the settings in the .env file as needed.
 
+The Swagger documentation should be accessible at: `http://localhost:4321/api/docs`
+
 ## A brief explanation
 
 This app offers comprehensive user management features, allowing administrators to define roles and permissions for different user groups. Users can perform basic CRUD operations to manage users, roles, and groups (permissions). Access to specific endpoints is determined by user groups (roles and permissions), providing a secure and customizable experience.
@@ -229,6 +231,8 @@ docker compose up --build -d
 ```
 
 در صورت نیاز به انجام تغییرات، می توانید فایل `.env` را بررسی کنید
+
+داکیومنت Swagger باید در ادرس `http://localhost:4321/api/docs` قابل دسترسی باشد.
 
 ## توضیح مختصر
 
