@@ -1,6 +1,6 @@
 import { uuid } from '@libs/constants/uuid.constant';
-import { AppController, DeleteInfo, GetInfo, PutInfo, User } from '@libs/decorators/index';
-import { UpdateCurrentUserDto } from '@libs/dtos/user';
+import { AppController, GetInfo, PutInfo, User } from '@libs/decorators/index';
+import { UpdateUserDto } from '@libs/dtos/user';
 import { UserEntity } from '@libs/entities/user/user.entity';
 import { AppModulesEnum } from '@libs/enums/app-modules.enum';
 import { RouteTypeEnum } from '@libs/enums/route-type.enum';
@@ -22,24 +22,28 @@ export class UserNormalController {
     return this._userService.getProfile(user);
   }
 
-  @PutInfo('', null, UpdateCurrentUserDto, false, {
+  @PutInfo('', null, UpdateUserDto, false, {
     summary: 'update current user',
     description: 'this route updates current user info',
     outputType: UpdateResultModel,
   })
   update(
-    @Body() updateCurrentUserDto: UpdateCurrentUserDto,
+    @Body() updateCurrentUserDto: UpdateUserDto,
     @User() user: UserAuthModel,
   ): Promise<UpdateResultModel> {
     return this._userService.updateCurrentUser(user, updateCurrentUserDto);
   }
 
-  @DeleteInfo(':id', ['id'], {
-    summary: 'delete one user',
-    description: "this route deletes one user with it's roles",
+  @PutInfo(':id', ['id'], UpdateUserDto, false, {
+    summary: 'update any user info - need to have permission based on role',
+    description: 'this route updates any user info by admin',
     outputType: UpdateResultModel,
   })
-  remove(@Param('id', ParseUUIDPipe) id: uuid): Promise<UpdateResultModel> {
-    return this._userService.remove(id);
+  updateAnyUser(
+    @Param('id', ParseUUIDPipe) id: uuid,
+    @Body() updateUserDto: UpdateUserDto,
+    @User() user: UserAuthModel,
+  ): Promise<UpdateResultModel> {
+    return this._userService.updateAnyUserWithLimitations(id, updateUserDto, user);
   }
 }

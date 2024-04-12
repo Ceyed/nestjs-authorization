@@ -1,5 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { RoleTypeEnum } from '@prisma/client';
+import { Type } from 'class-transformer';
 import { IsArray, IsEnum, IsNotEmpty, IsNumber, IsString, Min } from 'class-validator';
 import { BaseEntity } from '../base.entity';
 import { GroupEntity } from '../group/group.entity';
@@ -19,6 +20,7 @@ export class RoleEntity extends BaseEntity {
   @ApiProperty()
   @IsNumber()
   @Min(0)
+  @Type(() => Number)
   priority: number;
 
   @ApiProperty({ type: 'enum', enum: RoleTypeEnum })

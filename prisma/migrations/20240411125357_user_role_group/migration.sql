@@ -2,7 +2,7 @@
 CREATE TYPE "PermissionEnum" AS ENUM ('All', 'Create', 'Read', 'Update', 'Delete');
 
 -- CreateEnum
-CREATE TYPE "AppModulesEnum" AS ENUM ('All', 'User', 'Role', 'Permission', 'Groups', 'Auth');
+CREATE TYPE "AppModulesEnum" AS ENUM ('All', 'User', 'Role', 'Permission', 'Group', 'Auth');
 
 -- CreateEnum
 CREATE TYPE "RoleTypeEnum" AS ENUM ('Administrator', 'Manager', 'TeamLeader', 'Employee', 'Supervisor');

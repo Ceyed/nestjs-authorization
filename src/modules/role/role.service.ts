@@ -39,17 +39,19 @@ export class RoleService {
         orderBy = { createdAt: 'desc' };
       }
 
+      const where = {
+        ...(filters?.priority && { priority: +filters.priority }),
+        ...(filters?.type && { type: filters.type }),
+        ...(filters?.searchTerm && { name: { contains: filters.searchTerm } }),
+      };
+
       const results: RoleEntity[] = await this._prismaService.role.findMany({
         skip: pagination?.skip ?? 0,
         take: pagination?.size ?? 10,
-        where: {
-          ...(filters?.priority && { priority: +filters.priority }),
-          ...(filters?.type && { type: filters.type }),
-          ...(filters?.searchTerm && { name: { contains: filters.searchTerm } }),
-        },
+        where,
         orderBy,
       });
-      const total: number = await this._prismaService.role.count();
+      const total: number = await this._prismaService.role.count({ where });
       return [results, total];
     });
   }
