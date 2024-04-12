@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" title="Keeping this for you mrzi" /></a>
 </p>
 
 # NestJS Authorization (RBAC)
@@ -16,7 +16,7 @@
 - [Entities](#entities)
 - [How authentication works](#how-authentication-works)
 - [How authorization system works](#how-authorization-system-works)
-- [How to give access or revoke access to a user](#how-to-give-access-or-revoke-access-to-a-user)
+- [Give access or revoke access](#give-access-or-revoke-access)
 - [Modules](#modules)
 - [Tools](#tools)
 
@@ -177,8 +177,8 @@ Additionally, various custom functions, classes and modules have been developed 
 - [توضیح مختصر](#توضیح-مختصر)
 - [موجودیت ها](#موجودیت-ها)
 - [چگونگی کار احراز هویت](#چگونگی-کار-احراز-هویت)
-- [چگونگی کار سیستم مجوز](#چگونگی-کار-سیستم-مجوز-سنجی)
-- [چگونه به یک کاربر دسترسی داده یا دسترسی را لغو کنیم](#چگونه-به-یک-کاربر-دسترسی-داده-یا-دسترسی-را-لغو-کنیم)
+- [چگونگی کار سیستم مجوز سنجی](#چگونگی-کار-سیستم-مجوز-سنجی)
+- [انتصاب و لغر دسترسی](#انتصاب-و-لغر-دسترسی)
 - [ماژول ها](#ماژول-ها)
 - [ابزار](#ابزار)
 
@@ -252,7 +252,7 @@ docker compose up --build -d
 
 سپس کاربر X به ماژول "User" دسترسی "خواندن" و به ماژول های "Auth و Role" به طور همزمان، دسترسی "ایجاد کردن و خواندن" را دارد
 
-## چگونه به یک کاربر دسترسی داده یا دسترسی را لغو کنیم
+## انتصاب و لغر دسترسی
 
 در این سیستم، کنترل دسترسی مترادف با "گروه ها" است. اگر به یک کاربر گروهی اختصاص داده شود، کاربر دارای حق دسترسی مربوط به آن گروه هست. بنابراین، تنها روش اعطای دسترسی به یک کاربر، اختصاص گروه مناسب به آنها است
 
