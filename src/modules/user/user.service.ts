@@ -1,18 +1,20 @@
 import { uuid } from '@libs/constants/uuid.constant';
+import { OrderDto, PaginationDto } from '@libs/dtos/common';
+import { UpdateUserByAdminDto, UpdateUserDto } from '@libs/dtos/user';
+import { FilterUserDto } from '@libs/dtos/user/filter-user.dto';
 import { GroupEntity } from '@libs/entities/group/group.entity';
 import { UserEntity } from '@libs/entities/user/user.entity';
+import { RedisPrefixesEnum } from '@libs/enums/redis-prefixes.enum';
+import { RedisSubPrefixesEnum } from '@libs/enums/redis-sub-prefixes.enum';
 import { RoleTypeEnum } from '@libs/enums/role-type.enum';
 import { UserAuthModel } from '@libs/models/active-user-data.model';
 import { UpdateResultModel } from '@libs/models/update-result.model';
 import { PrismaService } from '@libs/modules/prisma';
+import { RedisHelperService } from '@libs/modules/redis-helper';
 import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { jwtConfig } from '@src/configs/jwt.config';
 import { HashingService } from '../auth/hashing/hashing.service';
-import {
-  UpdateUserByAdminDto,
-  UpdateUserDto,
-} from './../../../libs/src/lib/dtos/user/update-user.dto';
 
 @Injectable()
 export class UserService {
@@ -21,7 +23,45 @@ export class UserService {
     private readonly _hashingService: HashingService,
     @Inject(jwtConfig.KEY)
     private readonly _jwtConfig: ConfigType<typeof jwtConfig>,
+    private readonly _redisHelperService: RedisHelperService,
   ) {}
+
+  async getAllWithPagination(
+    pagination: PaginationDto,
+    order: OrderDto,
+    filters: FilterUserDto,
+  ): Promise<[UserEntity[], number]> {
+    const redisKey: string = this._getRedisKey(
+      JSON.stringify(pagination) + JSON.stringify(order) + JSON.stringify(filters),
+    );
+    return this._redisHelperService.getFromCacheOrDb<[UserEntity[], number]>(redisKey, async () => {
+      let orderBy = {};
+      if (order?.order) {
+        orderBy = { [order.order]: order.orderBy };
+      } else {
+        orderBy = { createdAt: 'desc' };
+      }
+
+      const where = filters?.searchTerm
+        ? {
+            OR: [
+              ...(filters?.searchTerm && [{ name: { contains: filters.searchTerm } }]),
+              ...(filters?.searchTerm && [{ username: { contains: filters.searchTerm } }]),
+            ],
+          }
+        : {};
+
+      let results: UserEntity[] = await this._prismaService.user.findMany({
+        skip: pagination?.skip ?? 0,
+        take: pagination?.size ?? 10,
+        where,
+        orderBy,
+      });
+      results = this._excludePassword(results);
+      const total: number = await this._prismaService.user.count({ where });
+      return [results, total];
+    });
+  }
 
   async getOneOrFail(id: uuid, withRoleRelation: boolean = false): Promise<UserEntity> {
     const user: UserEntity = await this._prismaService.user.findFirst({
@@ -29,11 +69,11 @@ export class UserService {
       ...(withRoleRelation && { include: { role: true } }),
     });
     if (!user) throw new NotFoundException('User not found!');
-    return user;
+    return this._excludePassword([user]).pop();
   }
 
   getProfile(user: UserAuthModel): Promise<UserEntity> {
-    return this._prismaService.user.findFirstOrThrow({ where: { id: user.sub } });
+    return this.getOneOrFail(user.sub);
   }
 
   async updateByAdmin(
@@ -154,5 +194,26 @@ export class UserService {
       data: updateUserDto,
     });
     return { status: !!updateResult };
+  }
+
+  private _excludePassword(users: UserEntity[]): UserEntity[] {
+    users.forEach((user) => delete user['password']);
+    return users;
+  }
+
+  private _getRedisKey(paginationAndOrder: string): string {
+    return this._redisHelperService.getStandardKey(
+      RedisPrefixesEnum.User,
+      RedisSubPrefixesEnum.All,
+      paginationAndOrder,
+    );
+  }
+
+  private _removeUserFromRedis(): void {
+    const pattern: string = this._redisHelperService.getPatternKey(
+      RedisPrefixesEnum.User,
+      RedisSubPrefixesEnum.All,
+    );
+    this._redisHelperService.deleteByPattern(pattern);
   }
 }

@@ -83,6 +83,7 @@ export class GroupService {
       where: { id },
       data: updateGroupDto,
     });
+    this._removeGroupFromRedis();
     return { status: !!updateResult };
   }
 
@@ -96,6 +97,7 @@ export class GroupService {
       where: { id },
       data: { isDefault: true },
     });
+    this._removeGroupFromRedis();
     return { status: !!updateResult };
   }
 
