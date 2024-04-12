@@ -84,7 +84,7 @@ enum AppModulesEnum {
   User
   Role
   Permission
-  Groups
+  Group
   Auth
 }
 

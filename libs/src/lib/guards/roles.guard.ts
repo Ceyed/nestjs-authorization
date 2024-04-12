@@ -1,14 +1,13 @@
 import { RoleGuardService } from '@libs/modules/role-guard';
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RoleTypeEnum } from '@prisma/client';
 import {
   MODULE_CUSTOM_METADATA,
   REQUEST_USER_KEY,
   ROUTE_ACTION_METADATA,
   ROUTE_TYPE_METADATA,
 } from '../constants';
-import { AppModulesEnum, PermissionEnum, RouteTypeEnum } from '../enums';
+import { AppModulesEnum, PermissionEnum, RoleTypeEnum, RouteTypeEnum } from '../enums';
 import { UserAuthModel } from '../models';
 
 @Injectable()
@@ -29,7 +28,10 @@ export class RolesGuard implements CanActivate {
     if (!user) return false;
 
     // * Only admin have access to admin routes
-    if (routeType === RouteTypeEnum.ADMIN && user.roleType !== RoleTypeEnum.Administrator) {
+    if (
+      routeType === RouteTypeEnum.ADMIN &&
+      ![RoleTypeEnum.Administrator, RoleTypeEnum.Manager].includes(user.roleType)
+    ) {
       return false;
     }
 

@@ -1,16 +1,17 @@
 import { uuid } from '@libs/constants/uuid.constant';
 import { GroupEntity } from '@libs/entities/group/group.entity';
 import { UserEntity } from '@libs/entities/user/user.entity';
+import { RoleTypeEnum } from '@libs/enums/role-type.enum';
 import { UserAuthModel } from '@libs/models/active-user-data.model';
 import { UpdateResultModel } from '@libs/models/update-result.model';
 import { PrismaService } from '@libs/modules/prisma';
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ConfigType } from '@nestjs/config';
 import { jwtConfig } from '@src/configs/jwt.config';
 import { HashingService } from '../auth/hashing/hashing.service';
 import {
-  UpdateCurrentUserDto,
   UpdateUserByAdminDto,
+  UpdateUserDto,
 } from './../../../libs/src/lib/dtos/user/update-user.dto';
 
 @Injectable()
@@ -22,8 +23,11 @@ export class UserService {
     private readonly _jwtConfig: ConfigType<typeof jwtConfig>,
   ) {}
 
-  async getOneOrFail(id: uuid): Promise<UserEntity> {
-    const user: UserEntity = await this._prismaService.user.findFirst({ where: { id } });
+  async getOneOrFail(id: uuid, withRoleRelation: boolean = false): Promise<UserEntity> {
+    const user: UserEntity = await this._prismaService.user.findFirst({
+      where: { id },
+      ...(withRoleRelation && { include: { role: true } }),
+    });
     if (!user) throw new NotFoundException('User not found!');
     return user;
   }
@@ -55,24 +59,32 @@ export class UserService {
 
   async updateCurrentUser(
     user: UserAuthModel,
-    updateCurrentUserDto: UpdateCurrentUserDto,
+    updateUserDto: UpdateUserDto,
   ): Promise<UpdateResultModel> {
-    updateCurrentUserDto =
-      await this._updatePasswordIfNeeded<UpdateCurrentUserDto>(updateCurrentUserDto);
-
-    const updateResult: UserEntity = await this._prismaService.user.update({
-      where: { id: user.sub },
-      data: updateCurrentUserDto,
-    });
-    return { status: !!updateResult };
+    return this._updateUserInfo(user.sub, updateUserDto);
   }
 
-  remove(id: uuid): Promise<UpdateResultModel> {
-    // todo
-    return Promise.resolve({ status: false });
+  async updateAnyUserWithLimitations(
+    id: uuid,
+    updateUserDto: UpdateUserDto,
+    user: UserAuthModel,
+  ): Promise<UpdateResultModel> {
+    await this._userHasPermissionToUpdate(id, user);
+    return this._updateUserInfo(id, updateUserDto);
   }
 
-  private async _updatePasswordIfNeeded<T extends UpdateCurrentUserDto | UpdateUserByAdminDto>(
+  async remove(id: uuid): Promise<UpdateResultModel> {
+    try {
+      await this.getOneOrFail(id);
+      await this._prismaService.userGroup.deleteMany({ where: { userId: id } });
+      const deleteResult: UserEntity = await this._prismaService.user.delete({ where: { id } });
+      return { status: !!deleteResult };
+    } catch (error) {
+      return { status: false };
+    }
+  }
+
+  private async _updatePasswordIfNeeded<T extends UpdateUserDto | UpdateUserByAdminDto>(
     data: T,
   ): Promise<T> {
     if (data?.password) {
@@ -113,5 +125,34 @@ export class UserService {
         groupId: newDefaultGroup.id,
       },
     });
+  }
+
+  private async _userHasPermissionToUpdate(id: uuid, user: UserAuthModel): Promise<void> {
+    const targetUser: UserEntity = await this.getOneOrFail(id, true);
+    const currentUser: UserEntity = await this.getOneOrFail(user.sub, true);
+
+    if (currentUser.role.priority <= targetUser.role.priority) {
+      if (
+        currentUser.role.type === RoleTypeEnum.Employee &&
+        currentUser.role.priority !== targetUser.role.priority
+      ) {
+        throw new UnauthorizedException();
+      }
+    } else {
+      throw new UnauthorizedException();
+    }
+  }
+
+  private async _updateUserInfo(
+    id: uuid,
+    updateUserDto: UpdateUserDto,
+  ): Promise<UpdateResultModel> {
+    updateUserDto = await this._updatePasswordIfNeeded<UpdateUserDto>(updateUserDto);
+
+    const updateResult: UserEntity = await this._prismaService.user.update({
+      where: { id },
+      data: updateUserDto,
+    });
+    return { status: !!updateResult };
   }
 }
