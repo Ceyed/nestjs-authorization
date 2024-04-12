@@ -1,5 +1,5 @@
 <p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" title="Keeping this for you mrzi" /></a>
 </p>
 
 # NestJS Authorization (RBAC)
@@ -16,19 +16,39 @@
 - [Entities](#entities)
 - [How authentication works](#how-authentication-works)
 - [How authorization system works](#how-authorization-system-works)
-- [How to give access or revoke access to a user](#how-to-give-access-or-revoke-access-to-a-user)
+- [Give access or revoke access](#give-access-or-revoke-access)
 - [Modules](#modules)
 - [Tools](#tools)
 
 ## Setup
 
-To get started, simply run the following command:
+To get started, you have two options:
+
+### Automatic Installation
+
+Simply run the following command:
+
+```bash
+./install.sh
+```
+
+This script will set up the environment and start the application.
+
+### Manual Installation
+
+First, copy `.env` file from `.env.sample`:
+
+```bash
+cp .env.sample .env
+```
+
+Next, start the application using Docker Compose:
 
 ```bash
 docker compose up --build -d
 ```
 
-Feel free to check the `.env` file if you need to make any adjustments
+Feel free to review and adjust the settings in the .env file as needed.
 
 ## A brief explanation
 
@@ -177,14 +197,32 @@ Additionally, various custom functions, classes and modules have been developed 
 - [توضیح مختصر](#توضیح-مختصر)
 - [موجودیت ها](#موجودیت-ها)
 - [چگونگی کار احراز هویت](#چگونگی-کار-احراز-هویت)
-- [چگونگی کار سیستم مجوز](#چگونگی-کار-سیستم-مجوز-سنجی)
-- [چگونه به یک کاربر دسترسی داده یا دسترسی را لغو کنیم](#چگونه-به-یک-کاربر-دسترسی-داده-یا-دسترسی-را-لغو-کنیم)
+- [چگونگی کار سیستم مجوز سنجی](#چگونگی-کار-سیستم-مجوز-سنجی)
+- [انتصاب و لغر دسترسی](#انتصاب-و-لغر-دسترسی)
 - [ماژول ها](#ماژول-ها)
 - [ابزار](#ابزار)
 
 ## راه اندازی
 
-برای شروع کافیه دستور زیر رو وارد کنید:
+برای شروع، دو روش زیر را دارید:
+
+### نصب خودکار
+
+به راحتی دستور زیر را اجرا کنید:
+
+```bash
+./install.sh
+```
+
+### نصب دستی
+
+ابتدا فایل `.env` را از فایل `.env.sample` کپی کنید:
+
+```bash
+cp .env.sample .env
+```
+
+سپس، برنامه را با استفاده از Docker Compose راه‌اندازی کنید:
 
 ```bash
 docker compose up --build -d
@@ -252,7 +290,7 @@ docker compose up --build -d
 
 سپس کاربر X به ماژول "User" دسترسی "خواندن" و به ماژول های "Auth و Role" به طور همزمان، دسترسی "ایجاد کردن و خواندن" را دارد
 
-## چگونه به یک کاربر دسترسی داده یا دسترسی را لغو کنیم
+## انتصاب و لغر دسترسی
 
 در این سیستم، کنترل دسترسی مترادف با "گروه ها" است. اگر به یک کاربر گروهی اختصاص داده شود، کاربر دارای حق دسترسی مربوط به آن گروه هست. بنابراین، تنها روش اعطای دسترسی به یک کاربر، اختصاص گروه مناسب به آنها است
 

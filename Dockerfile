@@ -10,13 +10,9 @@ COPY package*.json ./
 
 RUN pnpm install
 
-COPY .env.sample .env
-
-COPY prisma/schema.prisma prisma/schema.prisma
+COPY . .
 
 RUN npx prisma generate
-
-COPY . .
 
 EXPOSE 4321
 
