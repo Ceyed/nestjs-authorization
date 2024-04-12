@@ -1,7 +1,9 @@
 import { uuid } from '@libs/constants/uuid.constant';
+import { booleanTransform } from '@libs/utils/boolean-transform';
 import { ApiProperty } from '@nestjs/swagger';
 import { AppModulesEnum, PermissionEnum } from '@prisma/client';
-import { IsArray, IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { BaseEntity } from '../base.entity';
 import { RoleEntity } from '../role/role.entity';
 import { UserGroup } from '../user-group/user-group.entity';
@@ -21,6 +23,11 @@ export class GroupEntity extends BaseEntity {
   @IsEnum(PermissionEnum, { each: true })
   @IsArray()
   permissions: PermissionEnum[];
+
+  @ApiProperty()
+  @IsBoolean()
+  @Transform((params) => booleanTransform(params))
+  isDefault: boolean;
 
   @ApiProperty({ format: 'uuid', type: String })
   @IsUUID()

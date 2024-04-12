@@ -1,10 +1,8 @@
-import { RoleEntity } from '@libs/entities/role/role.entity';
+import { GroupEntity } from '@libs/entities/group/group.entity';
 import { ApiPropertyOptional, PartialType, PickType } from '@nestjs/swagger';
 import { IsOptional, IsString } from 'class-validator';
 
-export class FilterRoleDto extends PartialType(
-  PickType(RoleEntity, ['type', 'priority'] as const),
-) {
+export class FilterGroupDto extends PartialType(PickType(GroupEntity, ['isDefault'] as const)) {
   @ApiPropertyOptional()
   @IsString()
   @IsOptional()
