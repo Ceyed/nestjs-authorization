@@ -62,7 +62,7 @@ export class GroupNormalController {
     return this._groupService.create(createGroupDto);
   }
 
-  @PutInfo(':id/:userId', ['id', 'userId'], null, false, {
+  @PutInfo('assign-to-user/:id/:userId', ['id', 'userId'], null, false, {
     summary: 'assign group to user',
     description: 'this route assigns the group to the user requested by the ids put in the params',
     outputType: UpdateResultModel,
@@ -72,6 +72,19 @@ export class GroupNormalController {
     @Param('userId', ParseUUIDPipe) userId: uuid,
   ): Promise<UpdateResultModel> {
     return this._groupService.assignToUser(id, userId);
+  }
+
+  @PutInfo('revoke-from-user/:id/:userId', ['id', 'userId'], null, false, {
+    summary: 'revoke group from user',
+    description:
+      'this route revokes the group from the user requested by the ids put in the params',
+    outputType: UpdateResultModel,
+  })
+  revokeGroupFromUser(
+    @Param('id', ParseUUIDPipe) id: uuid,
+    @Param('userId', ParseUUIDPipe) userId: uuid,
+  ): Promise<UpdateResultModel> {
+    return this._groupService.revokeFromUser(id, userId);
   }
 
   @PutInfo(':id', ['id'], UpdateGroupDto, false, {

@@ -1,5 +1,5 @@
 import { uuid } from '@libs/constants/uuid.constant';
-import { UserGroup } from '@libs/entities/user-group/user-group.entity';
+import { UserGroupEntity } from '@libs/entities/user-group/user-group.entity';
 import { UserEntity } from '@libs/entities/user/user.entity';
 import { RedisPrefixesEnum } from '@libs/enums/redis-prefixes.enum';
 import { RedisSubPrefixesEnum } from '@libs/enums/redis-sub-prefixes.enum';
@@ -45,7 +45,7 @@ export class RoleGuardService {
     );
   }
 
-  private _serializeUserGroups(userGroups: Partial<UserGroup>[]): Record<string, string[]>[] {
+  private _serializeUserGroups(userGroups: Partial<UserGroupEntity>[]): Record<string, string[]>[] {
     return userGroups.reduce((acc, item) => {
       acc.push({
         scopes: item.group.scopes,

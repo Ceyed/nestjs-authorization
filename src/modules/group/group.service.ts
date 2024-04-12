@@ -78,6 +78,18 @@ export class GroupService {
     return { status: !!assignResult };
   }
 
+  async revokeFromUser(id: uuid, userId: uuid): Promise<UpdateResultModel> {
+    try {
+      await this._revokeGroupFromUserValidation(id, userId);
+      const deleteResult = await this._prismaService.userGroup.deleteMany({
+        where: { userId, groupId: id },
+      });
+      return { status: !!deleteResult.count };
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async update(id: uuid, updateGroupDto: UpdateGroupDto): Promise<UpdateResultModel> {
     await this.getOneOrFail(id);
     const updateResult: GroupEntity = await this._prismaService.group.update({
@@ -105,6 +117,7 @@ export class GroupService {
   async delete(id: uuid): Promise<UpdateResultModel> {
     await this._deleteValidation(id);
     try {
+      await this._prismaService.userGroup.deleteMany({ where: { groupId: id } });
       const deleteResult: GroupEntity = await this._prismaService.group.delete({ where: { id } });
       this._removeGroupFromRedis();
       return { status: !!deleteResult };
@@ -141,6 +154,16 @@ export class GroupService {
       throw new ConflictException('The group is not compatible to the user');
     }
     return [group, user];
+  }
+
+  private async _revokeGroupFromUserValidation(id: uuid, userId: uuid): Promise<void> {
+    await this.getOneOrFail(id);
+    const userHasThisGroup: number = await this._prismaService.userGroup.count({
+      where: { groupId: id, userId },
+    });
+    if (!userHasThisGroup) {
+      throw new ConflictException('This group is not assigned to this user');
+    }
   }
 
   private _getRedisKey(params: string): string {

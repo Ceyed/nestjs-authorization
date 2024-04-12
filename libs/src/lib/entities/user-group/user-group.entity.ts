@@ -5,7 +5,7 @@ import { BaseEntity } from '../base.entity';
 import { GroupEntity } from '../group/group.entity';
 import { UserEntity } from '../user/user.entity';
 
-export class UserGroup extends BaseEntity {
+export class UserGroupEntity extends BaseEntity {
   @ApiProperty()
   @IsUUID()
   @IsNotEmpty()
