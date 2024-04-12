@@ -6,7 +6,7 @@ import { Transform } from 'class-transformer';
 import { IsArray, IsBoolean, IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
 import { BaseEntity } from '../base.entity';
 import { RoleEntity } from '../role/role.entity';
-import { UserGroup } from '../user-group/user-group.entity';
+import { UserGroupEntity } from '../user-group/user-group.entity';
 
 export class GroupEntity extends BaseEntity {
   @ApiProperty()
@@ -38,5 +38,5 @@ export class GroupEntity extends BaseEntity {
   role?: RoleEntity;
 
   @ApiProperty()
-  userGroups?: UserGroup[];
+  userGroups?: UserGroupEntity[];
 }
