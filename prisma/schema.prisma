@@ -1,8 +1,97 @@
 generator client {
   provider = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x"]
 }
 
 datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
+}
+
+model User {
+  @@map("users")
+  
+  id          String            @id @default(uuid()) @db.Uuid
+  createdAt   DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime          @updatedAt @db.Timestamp(6)
+  name        String
+  username    String            @unique
+  password    String
+
+  roleId      String            @db.Uuid
+  role        Role              @relation(fields: [roleId], references: [id])
+
+  userGroups  UserGroup[]
+}
+
+model Role {
+  @@map("roles")
+  
+  id          String            @id @default(uuid()) @db.Uuid
+  createdAt   DateTime          @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime          @updatedAt @db.Timestamp(6)
+  name        String            @unique
+  luckyNumber Int
+  type        RoleTypeEnum
+  priority    Int
+
+  users       User[]
+  groups      Group[]
+}
+
+model Group {
+  @@map("groups")
+  
+  id            String          @id @default(uuid()) @db.Uuid
+  createdAt     DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime        @updatedAt @db.Timestamp(6)
+  name          String          @unique
+  scopes        AppModulesEnum[]
+  permissions   PermissionEnum[]
+  isDefault     Boolean         @default(false)
+
+  roleId        String          @db.Uuid
+  role          Role            @relation(fields: [roleId], references: [id])
+
+  userGroups    UserGroup[]
+}
+
+model UserGroup {
+  @@map("users_groups")
+  @@id([userId, groupId])
+
+  createdAt     DateTime        @default(now()) @db.Timestamp(6)
+  updatedAt     DateTime        @updatedAt @db.Timestamp(6)
+
+  userId        String          @db.Uuid
+  user          User            @relation(fields: [userId], references: [id])
+
+  groupId       String          @db.Uuid
+  group         Group           @relation(fields: [groupId], references: [id])
+}
+
+
+enum PermissionEnum {
+  All
+  Create
+  Read
+  Update
+  Delete
+}
+
+enum AppModulesEnum {
+  All
+  User
+  Role
+  Permission
+  Groups
+  Auth
+}
+
+enum RoleTypeEnum {
+  Administrator
+  Manager
+  TeamLeader
+  Employee
+  Supervisor
 }
