@@ -94,6 +94,7 @@ export class UserService {
       where: { id },
       data: updateUserByAdminDto,
     });
+    this._removeUserFromRedis();
     return { status: !!updateResult };
   }
 
@@ -101,6 +102,7 @@ export class UserService {
     user: UserAuthModel,
     updateUserDto: UpdateUserDto,
   ): Promise<UpdateResultModel> {
+    this._removeUserFromRedis();
     return this._updateUserInfo(user.sub, updateUserDto);
   }
 
@@ -110,6 +112,7 @@ export class UserService {
     user: UserAuthModel,
   ): Promise<UpdateResultModel> {
     await this._userHasPermissionToUpdate(id, user);
+    this._removeUserFromRedis();
     return this._updateUserInfo(id, updateUserDto);
   }
 
@@ -118,6 +121,7 @@ export class UserService {
       await this.getOneOrFail(id);
       await this._prismaService.userGroup.deleteMany({ where: { userId: id } });
       const deleteResult: UserEntity = await this._prismaService.user.delete({ where: { id } });
+      this._removeUserFromRedis();
       return { status: !!deleteResult };
     } catch (error) {
       return { status: false };
