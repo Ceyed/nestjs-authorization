@@ -211,7 +211,7 @@ Additionally, various custom functions, classes and modules have been developed 
 <strong>🐼 Any contributions aimed at enhancing the system is welcome 🐼</strong>
 </p>
 
-# NestJS Authorization (RBAC)
+# سیستم مجوزسنجی (RBAC)
 
 ## فهرست مطالب
 
