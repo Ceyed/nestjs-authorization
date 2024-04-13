@@ -49,7 +49,7 @@ Next, start the application using Docker Compose:
 docker compose up --build -d
 ```
 
-Feel free to review and adjust the settings in the .env file as needed.
+Feel free to review and adjust the settings in the `.env` file as needed.
 
 The Swagger documentation should be accessible at: `http://localhost:4321/api/docs`
 
@@ -211,7 +211,7 @@ Additionally, various custom functions, classes and modules have been developed 
 <strong>🐼 Any contributions aimed at enhancing the system is welcome 🐼</strong>
 </p>
 
-# نام پروژه
+# NestJS Authorization (RBAC)
 
 ## فهرست مطالب
 
